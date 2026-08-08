@@ -1,5 +1,7 @@
 # Decision Profile
 
+> **v0.3:** Downgraded from core mechanism to optional modifier. See `SKILL.md` §15. Only use when historical pattern genuinely changes the recommendation.
+
 A structured method for understanding a user's decision patterns — without reducing them to fixed personality labels.
 
 ---
