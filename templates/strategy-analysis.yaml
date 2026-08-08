@@ -1,0 +1,66 @@
+# Strategy Analysis Template
+#
+# Structured evaluation of a single candidate strategy.
+# Use one instance per strategy under consideration.
+# NOT designed for display to end users.
+
+strategy_id: ""             # Unique ID, referenced in decision-state.yaml
+label: ""                   # Human-readable short name, e.g., "Leave Aug 8 silently"
+
+action: ""                  # What the user concretely does
+# Example: "Leave campus on Aug 8. Inform advisor on Aug 10 that leave starts Aug 11."
+
+# ---- WHAT THE USER GETS ----
+direct_gain:
+  time: ""                  # Time gained
+  money: ""                 # Financial gain
+  autonomy: ""              # Sense of freedom/control
+  convenience: ""           # Practical ease
+  opportunity: ""           # Windows opened
+  other: []                 # Any other gains
+
+# ---- RISK STRUCTURE ----
+dependencies: []            # External conditions this strategy needs to hold
+# Example: "Advisor does not request in-person meeting Aug 8-10"
+
+fragility: ""               # Low / Medium / High — with one-sentence explanation
+# Example: "High — depends on 3 days of no contact + junior's schedule aligning"
+
+exposure_points: []         # Specific events that could break the plan
+# Example: "Advisor calls about experiment; safety inspection requires presence"
+
+largest_failure_trigger: "" # The single exposure point with highest impact
+# Example: "Advisor requesting an in-person experiment handover"
+
+# ---- RECOVERY ----
+recovery_cost:
+  money: ""
+  time: ""
+  relationship: ""
+  trust: ""
+  rework: ""
+  opportunity_loss: ""
+  psychological: ""
+  other: []
+
+reversibility: ""           # High / Medium / Low — with one-sentence explanation
+
+# ---- ASYMMETRY CHECK ----
+upside: ""                  # Best realistic outcome
+# Example: "3 extra days of freedom"
+
+downside: ""                # Worst realistic outcome
+# Example: "Damaged advisor trust, future scrutiny, months of awkwardness"
+
+is_asymmetric: false        # true if upside is capped but downside is not
+
+# ---- INFORMATION GAPS ----
+unknowns: []                # What we still don't know about this strategy
+# Example: "Does the advisor typically check in mid-week?"
+
+# ---- PRACTICALITIES ----
+switching_cost: ""          # Cost to switch from this strategy to another
+# Example: "50 yuan rebooking fee"
+
+exit_path: ""               # How to abandon this strategy if it starts failing
+# Example: "Send truthful message: 'I left earlier than planned, apologies for the late notice.'"

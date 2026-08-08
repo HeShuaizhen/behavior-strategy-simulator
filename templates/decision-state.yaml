@@ -1,0 +1,58 @@
+# Decision State Template
+#
+# Internal structure for tracking a decision as it evolves.
+# NOT designed for display to end users — this is the Skill's working memory.
+#
+# Usage: Update fields as new information arrives.
+# Fields with [] are lists; add entries as discovered.
+
+decision_id: ""             # Unique identifier for this decision session
+
+user_goal:
+  primary: ""               # What does the user ultimately want?
+  secondary: []             # Subsidiary goals that still matter
+
+desired_outcome: ""         # What does "success" concretely look like?
+
+# ---- GROUND TRUTH ----
+facts: []                   # User stated, confirmed, or reliably evidenced
+# Example: "Junior colleague arrives at Quangang on Aug 10"
+
+constraints: []             # Hard limits the user cannot (or should not) violate
+# Example: "Advisor requires advance notice for leave"
+
+# ---- INFERRED / UNCERTAIN ----
+assumptions: []             # What the strategy depends on but is unconfirmed
+# Example: "Advisor will not initiate contact before Aug 10"
+
+unknowns: []                # Not known, could affect the recommendation
+# Example: "What is the rebooking fee?"
+
+# ---- PEOPLE ----
+stakeholders:               # Anyone affected by or able to affect the outcome
+  - actor: ""               # Name or role
+    role: ""                # Relationship to user
+    goals: []               # What does this person want?
+    knowledge: []           # What do they currently know?
+    constraints: []         # What limits their actions?
+    possible_actions: []    # What can they realistically do?
+
+# ---- OPTIONS ----
+candidate_strategies: []    # List of strategy IDs under consideration
+# Reference strategies by ID; details in strategy-analysis.yaml
+
+# ---- STRATEGY STRUCTURE ----
+dependencies: []            # What must hold true for the plan to work?
+# Example: "Junior colleague must be available to cover"
+
+commitments: []             # Promises or obligations the user has already made
+
+triggers: []                # Events that would force a re-evaluation
+# Example: "Advisor sends a message asking about experiment status"
+
+# ---- CURRENT CONCLUSION ----
+current_recommendation: ""  # What the Skill currently recommends
+
+confidence: ""              # low / medium / high — how confident in the recommendation?
+
+last_updated_reason: ""     # What new fact or analysis caused the last update?

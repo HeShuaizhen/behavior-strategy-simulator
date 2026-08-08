@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# OpenWolf context management (local only)
+.wolf/
+
+# Environment files
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
