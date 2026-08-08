@@ -1,5 +1,7 @@
 # Strategy Model
 
+> **Runtime entry point:** `SKILL.md` §5. This file provides extended definitions and examples.
+
 The core analytical framework for evaluating any candidate strategy. These six dimensions replace static pros/cons lists with a dynamic risk-structure analysis.
 
 ---

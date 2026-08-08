@@ -1,58 +1,58 @@
-# Decision State Template
+# Decision State Template — v0.3
 #
 # Internal structure for tracking a decision as it evolves.
-# NOT designed for display to end users — this is the Skill's working memory.
+# NOT for display to end users.
+#
+# Two modes, selected by Complexity Gate:
+#   LITE — MEDIUM complexity (use only the fields marked [LITE])
+#   FULL — HIGH complexity (use all fields)
 #
 # Usage: Update fields as new information arrives.
-# Fields with [] are lists; add entries as discovered.
 
-decision_id: ""             # Unique identifier for this decision session
+# ==================== LITE MODE (MEDIUM complexity) ====================
 
-user_goal:
-  primary: ""               # What does the user ultimately want?
-  secondary: []             # Subsidiary goals that still matter
+decision_id: ""             # [LITE] Unique identifier for this decision session
+
+user_goal: ""               # [LITE] What does the user ultimately want?
+
+facts: []                   # [LITE] User stated, confirmed, or reliably evidenced
+
+key_unknown: ""             # [LITE] The single unknown most likely to flip the recommendation
+
+candidate_strategies: []    # [LITE] Strategy IDs under consideration (2-3 max)
+
+main_trigger: ""            # [LITE] The event most likely to force re-evaluation
+
+current_lean: ""            # [LITE] Provisional direction based on current information
+
+# ==================== FULL MODE EXTENSIONS (HIGH complexity) ====================
 
 desired_outcome: ""         # What does "success" concretely look like?
 
-# ---- GROUND TRUTH ----
-facts: []                   # User stated, confirmed, or reliably evidenced
-# Example: "Junior colleague arrives at Quangang on Aug 10"
+secondary_goals: []         # Subsidiary goals that still matter
 
 constraints: []             # Hard limits the user cannot (or should not) violate
-# Example: "Advisor requires advance notice for leave"
 
-# ---- INFERRED / UNCERTAIN ----
 assumptions: []             # What the strategy depends on but is unconfirmed
-# Example: "Advisor will not initiate contact before Aug 10"
 
-unknowns: []                # Not known, could affect the recommendation
-# Example: "What is the rebooking fee?"
+unknowns: []                # All unknowns that could affect the recommendation
 
-# ---- PEOPLE ----
 stakeholders:               # Anyone affected by or able to affect the outcome
-  - actor: ""               # Name or role
-    role: ""                # Relationship to user
-    goals: []               # What does this person want?
-    knowledge: []           # What do they currently know?
-    constraints: []         # What limits their actions?
-    possible_actions: []    # What can they realistically do?
+  - actor: ""
+    role: ""
+    goals: []
+    knowledge: []
+    constraints: []
+    possible_actions: []
 
-# ---- OPTIONS ----
-candidate_strategies: []    # List of strategy IDs under consideration
-# Reference strategies by ID; details in strategy-analysis.yaml
-
-# ---- STRATEGY STRUCTURE ----
-dependencies: []            # What must hold true for the plan to work?
-# Example: "Junior colleague must be available to cover"
+dependencies: []            # External conditions that must hold for the plan to work
 
 commitments: []             # Promises or obligations the user has already made
 
 triggers: []                # Events that would force a re-evaluation
-# Example: "Advisor sends a message asking about experiment status"
 
-# ---- CURRENT CONCLUSION ----
-current_recommendation: ""  # What the Skill currently recommends
+recovery_path: ""           # How to recover if the chosen strategy fails
 
-confidence: ""              # low / medium / high — how confident in the recommendation?
+confidence: ""              # low / medium / high
 
 last_updated_reason: ""     # What new fact or analysis caused the last update?

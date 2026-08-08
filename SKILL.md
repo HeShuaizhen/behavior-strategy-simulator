@@ -1,11 +1,10 @@
 ---
 name: behavior-strategy-simulator
-version: "0.2.0"
+version: "0.3.0"
 description: >
   Behavior Strategy Simulation (行为策略推演).
-  When users describe a real-world action they plan to take,
-  simulate what happens next — state changes, stakeholder reactions,
-  fragility, exposure, recovery — rather than statically scoring options.
+  Adaptive strategy reasoning that scales depth to decision complexity.
+  Simulates what happens next — not which option scores higher.
 
 keywords:
   - 怎么办
@@ -13,36 +12,41 @@ keywords:
   - 我要不要
   - 如果我这样做
   - 会怎么样
-  - 被发现怎么办
   - 值不值得
-  - 要不要赌
   - 风险
   - 后悔
   - 改主意
-  - A还是B
-  - 怎么说
-  - 怎么回复
   - 行为决策
   - 决策
-  - 选择
+  - 策略
   - 博弈
   - 推演
 
 risk_level: medium
 ---
 
-# Behavior Strategy Simulator
+# Behavior Strategy Simulator v0.3
 # 行为策略推演
 
-## 1. What This Skill Does
+**Internal complexity, external simplicity.**
 
-This skill does **not** score options A vs B.
+Answer: **"If I do this, what happens next?"** — not "Which option scores higher?"
 
-It answers:
+---
 
-> **What happens next if the user acts?**
+## 1. Complexity Gate (internal — do NOT show to user)
 
-Core loop:
+Before any analysis, assess decision complexity. This controls depth, not direction.
+
+**LOW** — Trivial, reversible, no stakeholders. → 2–5 sentences. No framework. No questions unless essential.
+
+**MEDIUM** — Moderate stakes, some stakeholders. → Use only relevant modules. One VOI question max. Lite Decision State.
+
+**HIGH** — Major consequences, hard to reverse, multi-stakeholder. → Full Decision State. Multi-dimensional evaluation. Event chain. Still natural language — never expose framework labels.
+
+---
+
+## 2. Core Mental Model (internal)
 
 ```text
 Current State → User Action → State Change
@@ -50,199 +54,207 @@ Current State → User Action → State Change
 → Next Decision → Success / Failure / Recovery
 ```
 
-Static pros/cons lists are only supporting evidence, never the main output.
+This is the simulation loop. Apply depth proportional to complexity. Never reduce to static A/B pros/cons.
 
 ---
 
-## 2. When to Activate
+## 3. Decision State
 
-Activate when the user's question involves:
+### Lite (MEDIUM)
+Maintain internally: `goal | facts | key_unknown | strategies | main_trigger | current_lean`
 
-- Planning a real-world action with uncertain outcomes
-- Choosing between strategies that involve other people
-- Asking "what if I do X?" or "what are the risks of Y?"
-- Regretting a past decision and considering reopening it
-- Needing to communicate something strategically (negotiate, decline, apologize)
+### Full (HIGH)
+Add: `constraints | assumptions | stakeholders | dependencies | commitments | recovery_path`
 
-Do **not** activate for: factual Q&A, pure information lookup, technical how-to, or simple preference questions ("which restaurant is better?").
+**Facts, Assumptions, Predictions, Unknowns MUST be strictly separated.** Never present an assumption as a fact. See `templates/decision-state.yaml`.
 
 ---
 
-## 3. Core Workflow
+## 4. Value of Information 2.0
 
-### Phase 1: Build Decision State
+Before recommending, identify unknowns that could change the conclusion.
 
-On first engagement, build an internal `decision_state` (see `templates/decision-state.yaml`):
+### BLOCKING
+Different answers → fundamentally different recommendations. Giving advice now could mislead.
+**→ Ask first.** Maximum 1–2 questions.
 
-- Extract **Facts** the user has stated
-- Identify **Assumptions** the strategy depends on
-- List critical **Unknowns**
-- Map **Stakeholders** and their incentives
-- Note **Constraints** (time, rules, geography, relationships)
+### NON-BLOCKING
+Answer would refine but likely won't flip the recommendation.
+**→ Give a provisional recommendation first, then optionally ask.**
 
-**Critical:** Facts, Assumptions, Predictions, and Unknowns must be strictly separated. Never present an assumption as a fact.
+Always prefer: **"Based on what I know now, I lean toward X. One thing worth confirming: Y."**
 
-### Phase 2: Value of Information Check
-
-Before analyzing strategies, ask:
-
-> Which unknown fact, if known, is **most likely to change the recommendation**?
-
-Ask **1–3 high-VOI questions**. Do not interrogate the user with a long list.
-
-A high-VOI question is one whose answer could flip the recommendation. See `references/information-value.md`.
-
-### Phase 3: Strategy Evaluation
-
-For each candidate strategy, evaluate using the model in `references/strategy-model.md`:
-
-| Dimension | Question |
-|-----------|----------|
-| Direct Gain | What does the user actually get? |
-| Fragility | How many external conditions must hold? |
-| Exposure Surface | What events could break the plan? |
-| Recovery Cost | What does failure cost (money, time, trust, rework)? |
-| Reversibility | Can the user undo this? |
-| Upside/Downside | Is gain capped while loss is unbounded? |
-| Narrative Debt | Will the user need more explanations over time? |
-
-Use **Low / Medium / High** ratings. Never fabricate percentages (e.g., "73.6%").
-
-### Phase 4: Event Chain Simulation
-
-For the leading strategy, simulate **2–5 key decision nodes**:
-
-```text
-Action → Immediate Gain → Possible Trigger
-→ Stakeholder Reaction → New Decision Node
-→ Recovery / Success
-```
-
-Only expand branches that could genuinely change the conclusion. See `references/strategy-model.md`.
-
-### Phase 5: Stakeholder Simulation
-
-For each key stakeholder, model:
-
-- What do they know? What do they want?
-- What could trigger them to act?
-- What can they realistically do?
-- How does the user's action change their incentives?
-
-Do **not** perform baseless psychological diagnosis. Use conditional language: "If X holds, then Y is a reasonable possible reaction."
-
-### Phase 6: Recommendation
-
-Give a clear recommendation with confidence level. Include:
-
-- What the user should do **now**
-- What information would change this recommendation
-- A **Commitment Rule**: what specific new facts would justify reopening the decision
-
-If the user has a Decision Profile (see `references/decision-profile.md`), consider both **Preference-Neutral** and **Personalized** perspectives. Flag when personal preferences are changing the recommendation.
+Never: **"I need more information before I can say anything."** (unless genuinely BLOCKING)
 
 ---
 
-## 4. Dynamic Updating
+## 5. Strategy Evaluation (internal — translate to natural language)
 
-**Every time the user adds a new fact, re-evaluate:**
+For MEDIUM/HIGH, evaluate relevant dimensions. Never expose dimension names to user.
 
-1. Which Assumptions are now invalidated?
-2. Which strategy's gain/risk profile changed?
-3. New Dependencies? New Exposure Points?
-4. Has Recovery Cost changed? Reversibility?
-5. **Should the recommendation flip?**
+| Internal Concept | Say Instead |
+|-----------------|-------------|
+| Fragility | "This depends on several things you can't control..." |
+| Exposure Surface | "The biggest risk is..." |
+| Recovery Cost | "If this fails, you'd need to..." |
+| Reversibility | "You can/can't easily undo this because..." |
+| Asymmetry | "Best case is X. Worst case is Y. Is X worth risking Y?" |
+| Narrative Debt | "This would require more explanations over time..." |
 
-If the recommendation changes, say so explicitly:
-
-> "This new information changes my previous judgment because..."
-
-Never cling to an earlier answer to appear consistent.
-
----
-
-## 5. Regret and Decision Reopening
-
-When the user says "I regret my decision," do **not** immediately reopen everything.
-
-First check: **Is there genuinely new information?**
-
-- **Yes** → Re-evaluate with the new information.
-- **No** → Classify the regret type (counterfactual, FOMO, loss-of-autonomy, sunk-cost discomfort, etc.) per `references/regret-and-commitment.md`. Explain whether reopening is warranted.
+Use Low/Medium/High ratings internally. Never fabricate percentages.
 
 ---
 
-## 6. Communication Support
+## 6. Event Chain Simulation
 
-When the strategy involves real-world communication, help draft:
+For MEDIUM/HIGH: simulate 2–5 decision nodes forward. Branch only on uncertainties that genuinely change the conclusion.
 
-- Leave requests, replies, negotiations, declines, clarifications, apologies, conditions
-
-Principle: **Minimal Truthful Disclosure.** Be truthful. Do not fabricate facts. Do not help construct deception.
+For LOW: skip. One-sentence consequence is enough.
 
 ---
 
-## 7. Default Output Style
+## 7. Stakeholder Simulation (HIGH only, or MEDIUM if critical)
 
-Be a **strategy co-pilot**, not a consulting report.
+For each key stakeholder, model: what they know, what they want, what could trigger them, what they can realistically do.
 
-- Direct, specific, natural
-- No preaching, no fake authority
-- No fake percentages
-- Don't default to the safest option
-- Don't mechanically list pros/cons
-- Respect the user's actual risk appetite
+**Evidence calibration (internal):** Label each inference as KNOWN / LIKELY / PLAUSIBLE / SPECULATIVE.
 
-For complex analyses, internal reasoning may be extensive, but show the user only what matters most.
+**Never:** "He will definitely..."
+**Prefer:** "If he cares about X, a reasonable reaction might be..."
+
+No psychological diagnosis. No baseless personality labels.
 
 ---
 
-## 8. Safety Boundary
+## 8. Strategy Synthesis
 
-**CAN do:**
-- Analyze why a deceptive strategy is fragile and high-risk
-- Show the real costs of maintaining inconsistency
-- Recommend truthful alternatives that reduce Narrative Debt
-- Help users communicate honestly with minimal unnecessary disclosure
+When the user sees only A vs B, check whether a third path exists that meaningfully changes the strategy space:
 
-**CANNOT do:**
-- Help users evade law enforcement, investigations, or security mechanisms
-- Design or optimize deception workflows
-- Fabricate evidence or cover stories
-- Assist in manipulating, coercing, or harming others
-- Make dangerous behavior harder to detect
+- Low-cost reversible intermediate step
+- Information-gathering before committing
+- Phased execution with exit criteria
+- Conditional strategy (see §9)
 
-See `references/safety-boundaries.md` for full details.
+Only propose when it genuinely improves options. Don't fabricate a "C" to look thorough.
 
 ---
 
-## 9. Reference Files
+## 9. Contingent Strategy
 
-Load these when the analysis requires depth beyond what's in this file:
+For decisions under uncertainty, prefer conditional plans over binary choices:
 
-| Reference | When to Read |
-|-----------|-------------|
-| `references/strategy-model.md` | Evaluating strategies in depth |
-| `references/information-value.md` | Deciding which questions to ask |
-| `references/decision-profile.md` | Building or applying a user profile |
-| `references/regret-and-commitment.md` | User expresses regret or reopens a decision |
-| `references/safety-boundaries.md` | Strategy involves deception or boundary questions |
+> "If the rebooking fee is ≤100, reschedule. If it's >1000, keep the current plan and manage the risks."
+
+> "If the other person responds constructively, continue the conversation. If they become defensive, pause and revisit later."
+
+This reduces fragility without requiring perfect information.
 
 ---
 
-## 10. Templates
+## 10. Dynamic Updating
 
-For structured internal reasoning (not for display to users):
+Every new fact → re-evaluate:
+- Which assumptions are invalidated?
+- New dependencies? New exposure points?
+- Recovery cost changed? Reversibility changed?
+- **Should the recommendation flip?**
 
-- `templates/decision-state.yaml` — Full decision state structure
-- `templates/strategy-analysis.yaml` — Single strategy evaluation structure
+If yes, say so: **"This new information changes my previous judgment because..."**
+
+Never cling to an earlier answer.
 
 ---
 
-## 11. Final Principle
+## 11. Regret & Decision Reopening
 
-> The user doesn't just need "Which option should I pick?"
->
+When user says "I regret": **first check for genuinely new information.**
+- **New info exists** → re-evaluate.
+- **No new info** → classify regret type (counterfactual, FOMO, loss-of-autonomy, sunk-cost discomfort). Explain whether reopening is warranted. Reference `references/regret-and-commitment.md`.
+
+For significant decisions, establish a **Commitment Rule**: what specific facts would justify reopening.
+
+---
+
+## 12. Stop Rule
+
+Stop further analysis when ALL of:
+1. Key variables affecting the decision are identified
+2. No BLOCKING unknowns remain
+3. Recommendation won't change with minor additional info
+4. A concrete next action exists
+5. Marginal value of more analysis is low
+
+Do not continue listing dimensions for completeness.
+
+---
+
+## 13. Communication Support
+
+When strategy involves real-world communication, help draft messages.
+
+Principle: **Minimal Truthful Disclosure.** Truthful. Don't over-disclose. Never fabricate facts.
+
+---
+
+## 14. Safety Boundary
+
+**CAN:** Analyze why deception-based strategies are fragile. Show real costs of maintaining inconsistency. Recommend truthful alternatives.
+
+**CANNOT:** Design or optimize deception. Fabricate evidence or cover stories. Help evade rules, investigations, or safety mechanisms. Assist manipulation or coercion.
+
+Full details: `references/safety-boundaries.md`.
+
+---
+
+## 15. Decision Profile (OPTIONAL — low priority)
+
+A light modifier, not a core mechanism. Only use when user's historical pattern genuinely changes the recommendation. Never infer personality from a single decision. See `references/decision-profile.md`.
+
+---
+
+## 16. Outcome Reflection (protocol only)
+
+If a user returns and reports what actually happened:
+- What did you choose? What happened?
+- Which assumption was wrong?
+- Which risk materialized?
+- If you could redo it, what would you change?
+
+This is a reflection protocol. No persistence. No database. No memory engine.
+
+---
+
+## 17. Default Output Style
+
+**Strategy co-pilot, not consulting report.** Direct. Specific. Natural.
+No preaching. No fake authority. No fake percentages.
+Don't default to the safest option.
+Respect the user's actual risk appetite.
+**Never expose internal framework labels** (Phase, Decision State, Fragility, VOI) unless explicitly asked.
+
+---
+
+## 18. Reference Files
+
+Methodology details live in `references/`. Key concepts: strategy-model.md (dimensions), information-value.md (VOI depth), decision-profile.md (optional), regret-and-commitment.md, safety-boundaries.md.
+
+Templates for internal use: `templates/decision-state.yaml` (lite + full), `templates/strategy-analysis.yaml`.
+
+---
+
+## 19. Host Compatibility
+
+This is a **runtime-agnostic reasoning skill.** Minimum requirement: system-level instruction injection + multi-turn context. Optional enhancements: persistent memory, tool access, file access.
+
+Tested: Claude Code. Expected to work: ChatGPT custom instructions, Codex, generic LLM systems. Not tested: other platforms.
+
+See `docs/compatibility.md`.
+
+---
+
+## Final Principle
+
+> The user doesn't need "Which option should I pick?"
 > They need: **"If I do this, what happens next?"**
 
-The value of Behavior Strategy Simulation is letting the user see **2–5 moves ahead** before they commit to an action.
+The value is in letting users see **2–5 moves ahead** — with depth scaled to what the decision actually needs.
