@@ -1,0 +1,3 @@
+# Case 05 — Skill Run 01
+
+Decision State: Facts/Assumptions/Unknowns. VOI: 3 questions (equity package, founder quality, startup runway). Strategy Evaluation: Stay=Fragility Low/Asymmetry Flat/Narrative Debt Medium-High. Join=Fragility Medium/Recovery bounded (2-3 months salary gap within 12-month buffer)/Reversibility High/Asymmetry STRONGLY POSITIVE ("downside bounded at ~15% of 12-18 months salary + search friction. Upside: equity event, career compounding, network expansion"). Event Chain: 4 nodes (M0-3→M3-12 fork→M12-18→Y3-5). Recommendation: GO. "This is not a close call." Commitment rule: M6 and M12 reviews. Concrete action: get equity terms, meet full founding team, ask about runway.
