@@ -5,6 +5,23 @@
 **Runs:** 10 (5 cases × baseline + skill)
 **Judge:** Self-evaluated
 
+### Provenance
+
+| Run | Status |
+|-----|--------|
+| case01-baseline | Original (summary) |
+| case01-skill | Original (summary) |
+| case04-baseline | **Re-run** (2026-08-08 evidence audit) — original artifact was unavailable |
+| case04-skill | Original |
+| case05-baseline | Original (summary) |
+| case05-skill | Original (summary) |
+| case06-baseline | Original (summary) |
+| case06-skill | **Re-run** (2026-08-08 evidence audit) — original artifact was unavailable |
+| case07-baseline | Original (summary) |
+| case07-skill | Original (summary) |
+
+**Note:** Existing "original" files are annotated summaries (2–12 lines), not full raw transcripts. The evaluation was self-evaluated with inline scoring. See `evidence-audit.md` for full integrity assessment.
+
 ---
 
 ## Summary
